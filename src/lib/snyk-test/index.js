@@ -1,6 +1,7 @@
 module.exports = test;
 
 const detect = require('../detect');
+const detectIac = require('../detect-iac');
 const { runTest } = require('./run-test');
 const chalk = require('chalk');
 const pm = require('../package-managers');
@@ -34,13 +35,17 @@ async function executeTest(root, options) {
   try {
     if (!options.allProjects) {
       options.packageManager = options.iac
-        ? await detect.isIacProject(root, options)
+        ? await detectIac.detectIacProject(root, options)
         : detect.detectPackageManager(root, options);
     }
     return run(root, options).then((results) => {
       for (const res of results) {
         if (!res.packageManager) {
           res.packageManager = options.packageManager;
+        }
+
+        if (options.iacDirFiles && res.result?.projectType) {
+          res.packageManager = res.result.projectType;
         }
       }
       if (results.length === 1) {

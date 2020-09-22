@@ -1,12 +1,14 @@
-import { TestOptions } from '../../../../lib/types';
+import { Options, TestOptions } from '../../../../lib/types';
 
 export function summariseVulnerableResults(
   vulnerableResults,
-  options: TestOptions,
+  options: Options & TestOptions,
 ): string {
   const vulnsLength = vulnerableResults.length;
   if (vulnsLength) {
-    if (options.showVulnPaths) {
+    if (options.iac) {
+      return `, ${vulnsLength} contained issues.`;
+    } else if (options.showVulnPaths) {
       return `, ${vulnsLength} contained vulnerable paths.`;
     }
     return `, ${vulnsLength} had issues.`;

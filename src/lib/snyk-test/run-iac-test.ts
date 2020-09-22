@@ -47,13 +47,45 @@ export async function assembleIacLocalPayloads(
 ): Promise<Payload[]> {
   const payloads: Payload[] = [];
   // Forcing options.path to be a string as pathUtil requires is to be stringified
-  const targetFile = pathLib.resolve(root, '.');
-  const targetFileRelativePath = targetFile
-    ? pathUtil.join(pathUtil.resolve(`${options.path}`), targetFile)
-    : '';
 
+  if (!options.iacDirFiles) {
+    const targetFile = pathLib.resolve(root, '.');
+    const targetFileRelativePath = targetFile
+      ? pathUtil.join(pathUtil.resolve(`${options.path}`), targetFile)
+      : '';
+    const fileType = pathLib.extname(root).substr(1);
+    const payload = assembleIacLocalPayload(
+      fileType,
+      targetFile,
+      targetFileRelativePath,
+      options,
+    );
+    return [payload];
+  }
+
+  for (const iacFile of options.iacDirFiles) {
+    if (iacFile.projectType) {
+      const targetFile = iacFile.filePath;
+      const payload = assembleIacLocalPayload(
+        iacFile.fileType,
+        targetFile,
+        targetFile,
+        options,
+      );
+      payloads.push(payload);
+    }
+  }
+
+  return payloads;
+}
+
+function assembleIacLocalPayload(
+  fileType: string,
+  targetFile: string,
+  targetFileRelativePath: string,
+  options: Options & TestOptions,
+): Payload {
   const fileContent = fs.readFileSync(targetFile, 'utf8');
-  const fileType = root.substr(root.lastIndexOf('.') + 1);
   const projectType = projectTypeByFileType[fileType];
 
   const body: IacScan = {
@@ -61,7 +93,7 @@ export async function assembleIacLocalPayloads(
       fileContent,
       fileType: fileType as IacFileTypes,
     },
-    targetFile: root,
+    targetFile,
     type: projectType,
     //TODO(orka): future - support policy
     policy: '',
@@ -81,6 +113,5 @@ export async function assembleIacLocalPayloads(
     body,
   };
 
-  payloads.push(payload);
-  return payloads;
+  return payload;
 }

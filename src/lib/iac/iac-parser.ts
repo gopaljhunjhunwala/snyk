@@ -56,11 +56,11 @@ function parseYamlOrJson(fileContent: string, filePath: string): any {
 export function validateK8sFile(
   fileContent: string,
   filePath: string,
-  root: string,
+  fileName: string,
 ) {
   const k8sObjects: any[] = parseYamlOrJson(fileContent, filePath);
   if (!k8sObjects) {
-    throw IllegalIacFileError([root]);
+    throw IllegalIacFileError([fileName]);
   }
 
   let numOfSupportedKeyDocs = 0;
@@ -81,13 +81,13 @@ export function validateK8sFile(
       const key = mandatoryKeysForSupportedK8sKinds[kind][i];
       if (!k8sObject[key]) {
         debug(`Missing key (${key}) from supported k8s object kind (${kind})`);
-        throw IllegalIacFileError([root]);
+        throw IllegalIacFileError([fileName]);
       }
     }
   }
 
   if (numOfSupportedKeyDocs === 0) {
-    throw NotSupportedIacFileError([root]);
+    throw NotSupportedIacFileError([filePath]);
   }
 
   debug(`k8s config found (${filePath})`);

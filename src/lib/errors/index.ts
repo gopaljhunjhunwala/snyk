@@ -20,7 +20,8 @@ export { ExcludeFlagBadInputError } from './exclude-flag-bad-input';
 export { UnsupportedOptionCombinationError } from './unsupported-option-combination-error';
 export { FeatureNotSupportedByPackageManagerError } from './feature-not-supported-by-package-manager-error';
 export {
-  NotSupportedIacFileError,
-  IllegalIacFileError,
+  NotSupportedIacFileErrorMsg,
+  IllegalIacFileErrorMsg,
+  IacErrorWithMessage,
 } from './invalid-iac-file';
 export { TestLimitReachedError } from './test-limit-reached-error';

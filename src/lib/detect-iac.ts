@@ -2,7 +2,11 @@ import * as fs from 'fs';
 import * as pathLib from 'path';
 import * as debugLib from 'debug';
 import { isLocalFolder, localFileSuppliedButNotFound } from './detect';
-import { IllegalIacFileError, CustomError } from './errors';
+import {
+  IacErrorWithMessage,
+  IllegalIacFileErrorMsg,
+  CustomError,
+} from './errors';
 import {
   validateK8sFile,
   makeValidateTerraformRequest,
@@ -49,21 +53,28 @@ async function getProjectTypeForIacFile(filePath: string) {
   const fileName = pathLib.basename(filePath);
   const projectType = projectTypeByFileType[fileType];
   switch (projectType) {
-    case IacProjectType.K8S:
-      validateK8sFile(fileContent, filePath, fileName);
+    case IacProjectType.K8S: {
+      const { isValidFile, reason } = validateK8sFile(
+        fileContent,
+        filePath,
+        fileName,
+      );
+      if (!isValidFile) {
+        throw IacErrorWithMessage(reason);
+      }
       break;
+    }
     case IacProjectType.TERRAFORM: {
-      const {
-        isValidTerraformFile,
-        reason,
-      } = await makeValidateTerraformRequest(fileContent);
-      if (!isValidTerraformFile) {
+      const { isValidFile, reason } = await makeValidateTerraformRequest(
+        fileContent,
+      );
+      if (!isValidFile) {
         throw IllegalTerraformFileError([fileName], reason);
       }
       break;
     }
     default:
-      throw IllegalIacFileError([fileName]);
+      throw IacErrorWithMessage(IllegalIacFileErrorMsg([fileName]));
   }
 
   return projectType;

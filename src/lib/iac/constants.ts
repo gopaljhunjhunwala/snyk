@@ -24,3 +24,8 @@ export type IacValidateTerraformResponse = {
     reason: string;
   };
 };
+
+export interface IacValidationResponse {
+  isValidFile: boolean;
+  reason: string;
+}

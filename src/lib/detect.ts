@@ -39,6 +39,7 @@ const DETECTABLE_FILES: string[] = [
   'composer.lock',
   'Podfile',
   'Podfile.lock',
+  'poetry.lock',
 ];
 
 export const AUTO_DETECTABLE_FILES: string[] = [
@@ -63,6 +64,7 @@ export const AUTO_DETECTABLE_FILES: string[] = [
   'build.sbt',
   'build.gradle',
   'build.gradle.kts',
+  'poetry.lock',
 ];
 
 // when file is specified with --file, we look it up here
@@ -96,6 +98,7 @@ const DETECTABLE_PACKAGE_MANAGERS: {
   'CocoaPods.podfile.yaml': 'cocoapods',
   'CocoaPods.podfile': 'cocoapods',
   Podfile: 'cocoapods',
+  'poetry.lock': 'poetry',
 };
 
 export function isPathToPackageFile(path) {

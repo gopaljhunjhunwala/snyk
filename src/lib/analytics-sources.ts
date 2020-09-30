@@ -8,6 +8,8 @@
   Integration name is validated with a list
 */
 
+import { ArgsOptions } from '../cli/args';
+
 export const integrationNameHeader = 'SNYK_INTEGRATION_NAME';
 export const integrationVersionHeader = 'SNYK_INTEGRATION_VERSION';
 
@@ -46,7 +48,7 @@ enum TrackedIntegration {
 }
 
 // TODO: propagate these to the UTM params
-export const getIntegrationName = (args: Array<any>): string => {
+export const getIntegrationName = (args: ArgsOptions[]): string => {
   const integrationName = String(
     args[0]?.integrationName || // Integration details passed through CLI flag
       process.env[integrationNameHeader] ||
@@ -59,7 +61,7 @@ export const getIntegrationName = (args: Array<any>): string => {
   return '';
 };
 
-export const getIntegrationVersion = (args): string => {
+export const getIntegrationVersion = (args: ArgsOptions[]): string => {
   // Integration details passed through CLI flag
   const integrationVersion = String(
     args[0]?.integrationVersion || process.env[integrationVersionHeader] || '',

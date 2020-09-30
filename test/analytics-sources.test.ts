@@ -48,18 +48,21 @@ test('Integration version is loaded from envvar', (t) => {
 });
 
 test('Integration name is loaded and formatted from CLI flag', (t) => {
-  t.equal(getIntegrationName([{ integrationName: 'homebrew' }]), 'HOMEBREW');
+  t.equal(
+    getIntegrationName([{ integrationName: 'homebrew' }] as any),
+    'HOMEBREW',
+  );
   t.end();
 });
 
 test('Integration name is loaded and validated from CLI flag', (t) => {
-  t.equal(getIntegrationName([{ integrationName: 'invalid' }]), '');
+  t.equal(getIntegrationName([{ integrationName: 'invalid' }] as any), '');
   t.end();
 });
 
 test('Integration version is loaded from CLI flag', (t) => {
   t.equal(
-    getIntegrationVersion([{ integrationVersion: '1.2.3-Crystal' }]),
+    getIntegrationVersion([{ integrationVersion: '1.2.3-Crystal' }] as any),
     '1.2.3-Crystal',
   );
   t.end();

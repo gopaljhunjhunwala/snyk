@@ -1,28 +1,26 @@
 import * as fs from 'fs';
 import * as pathLib from 'path';
 import * as debugLib from 'debug';
-import { isLocalFolder, localFileSuppliedButNotFound } from './detect';
+import * as glob from 'glob';
+import { isLocalFolder, localFileSuppliedButNotFound } from '../detect';
 import {
   IacErrorWithMessage,
   IllegalIacFileErrorMsg,
   CustomError,
-} from './errors';
-import {
-  validateK8sFile,
-  makeValidateTerraformRequest,
-} from './iac/iac-parser';
+} from '../errors';
+import { validateK8sFile, makeValidateTerraformRequest } from './iac-parser';
 import {
   projectTypeByFileType,
   IacProjectType,
   IacFileTypes,
-} from './iac/constants';
+} from './constants';
 import {
   SupportLocalFileOnlyIacError,
   UnsupportedOptionFileIacError,
   IacDirectoryWithoutAnyIacFileError,
-} from './errors/unsupported-options-iac-error';
-import { IllegalTerraformFileError } from './errors/invalid-iac-file';
-import { Options, TestOptions, IacFileInDirectory } from './types';
+} from '../errors/unsupported-options-iac-error';
+import { IllegalTerraformFileError } from '../errors/invalid-iac-file';
+import { Options, TestOptions, IacFileInDirectory } from '../types';
 
 const debug = debugLib('snyk-detect-iac');
 
@@ -85,7 +83,7 @@ async function getFolderProjectType(
   options: Options & TestOptions,
 ) {
   const iacFiles: IacFileInDirectory[] = [];
-  const files = fs.readdirSync(root);
+  const files = glob.sync(pathLib.join(root, '/**/**/*.+(json|yaml|yml|tf)'));
 
   for (const fileName of files) {
     const ext = pathLib.extname(fileName).substr(1);
